@@ -555,11 +555,19 @@ async function loadData() {
     const text = await res.text();
     const lines = text.trim().split('\n');
     data = lines.slice(1).map(line => {
-     const match = line.match(/^(".*?"|[^,]*),(".*?"|[^,]*),(".*?"|[^,]*),(".*?"|[^,]*)/);
-if (!match) return null;
-const v = match.slice(1).map(s => s.trim().replace(/^"|"$/g, '')); 
-
-    const countries = [...new Set(data.map(d => d.country))].sort();
+    var cols = [];
+      var cur = '';
+      var inQ = false;
+      for (var i = 0; i < line.length; i++) {
+        var c = line[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += c; }
+      }
+      cols.push(cur.trim());
+      if (cols.length < 4) return null;
+      return { iso3: cols[0], country: cols[1], year: parseInt(cols[2]), value: parseFloat(cols[3]) };
+    }).filter(function(d) { return d && d.country && !isNaN(d.year) && !isNaN(d.value); });
     const cSel = document.getElementById('country-sel');
     cSel.innerHTML = '<option value="">— Select Country —</option>'
       + countries.map(c => `<option value="${c}">${c}</option>`).join('');
