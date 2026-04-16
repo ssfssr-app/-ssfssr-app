@@ -555,9 +555,9 @@ async function loadData() {
     const text = await res.text();
     const lines = text.trim().split('\n');
     data = lines.slice(1).map(line => {
-      const v = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
-      return { iso3: v[0], country: v[1], year: parseInt(v[2]), value: parseFloat(v[3]) };
-    }).filter(d => d.country && !isNaN(d.year) && !isNaN(d.value));
+     const match = line.match(/^(".*?"|[^,]*),(".*?"|[^,]*),(".*?"|[^,]*),(".*?"|[^,]*)/);
+if (!match) return null;
+const v = match.slice(1).map(s => s.trim().replace(/^"|"$/g, '')); 
 
     const countries = [...new Set(data.map(d => d.country))].sort();
     const cSel = document.getElementById('country-sel');
