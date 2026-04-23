@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SSFSSR Web Calculator — Supply Side Food Self-Sufficiency Ratio Database</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #2c3e50; min-height: 100vh; }
@@ -20,12 +21,22 @@ main { max-width: 900px; margin: 32px auto; padding: 0 20px 60px; }
 .panel.active { display: block; }
 .card { background: white; border-radius: 10px; padding: 28px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px; }
 .card-title { font-size: 14px; font-weight: 700; color: #1a3557; border-bottom: 2px solid #e8edf3; padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-.hero { background: #1a3557; color: white; border-radius: 10px; padding: 32px 36px; margin-bottom: 24px; }
-.hero h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-.hero .hero-sub { font-size: 14px; opacity: 0.85; margin-bottom: 18px; line-height: 1.6; }
-.hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-.badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 500; }
-.hero-note { font-size: 12px; opacity: 0.7; line-height: 1.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 14px; }
+.hero { font-family: 'Source Sans 3', sans-serif; background: linear-gradient(135deg, #f0faf4 0%, #e2f5e9 50%, #d4f0dd 100%); color: #000; border-radius: 12px; padding: 2.2rem 2.2rem 2rem; margin-bottom: 24px; border: 1px solid rgba(60,160,90,0.2); position: relative; overflow: hidden; }
+.hero-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.4rem; }
+.hero-left { flex: 1; min-width: 0; }
+.hero-globe { flex-shrink: 0; width: 180px; height: 180px; }
+canvas#globe { width: 180px; height: 180px; border-radius: 50%; box-shadow: -6px 10px 32px rgba(0,80,30,0.18); display: block; }
+.hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+.hero-eyebrow-line { width: 32px; height: 2px; background: #000; border-radius: 2px; flex-shrink: 0; }
+.hero-eyebrow-text { font-size: 13px; letter-spacing: 0.10em; text-transform: uppercase; color: #000; font-weight: 600; font-style: italic; }
+.hero h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700; line-height: 1.2; color: #000; margin-bottom: 0.4rem; }
+.hero-subtitle { font-size: 0.95rem; font-weight: 600; color: #c0281a; margin-bottom: 0.2rem; letter-spacing: 0.02em; }
+.hero-subtitle-sub { font-size: 0.82rem; color: #000; font-weight: 400; margin-bottom: 0; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.2rem; }
+.hero-badge { background: rgba(255,255,255,0.78); border: 1px solid rgba(0,0,0,0.2); border-radius: 6px; padding: 4px 13px; font-size: 12px; font-weight: 400; color: #000; display: flex; align-items: center; gap: 6px; }
+.hero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #000; }
+.hero-divider { border: none; border-top: 1px solid rgba(0,0,0,0.12); margin: 0 0 1.2rem; }
+.hero-note { font-size: 12.5px; color: #000; line-height: 1.8; }
 .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 20px; }
 .field { display: flex; flex-direction: column; gap: 5px; }
 .field label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.6px; }
@@ -37,8 +48,8 @@ select:focus { outline: none; border-color: #5dade2; }
 .btn-secondary { background: #ecf0f1; color: #2c3e50; }
 .btn-secondary:hover { background: #dce1e7; }
 .status { padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
-.status.ok   { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
-.status.err  { background: #fdedec; color: #922b21; border: 1px solid #f1948a; }
+.status.ok { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+.status.err { background: #fdedec; color: #922b21; border: 1px solid #f1948a; }
 .status.info { background: #eaf4fb; color: #1a5276; border: 1px solid #aed6f1; }
 #result { min-height: 60px; padding: 20px; background: #f8fafc; border-radius: 8px; border: 1.5px solid #dde2e8; font-size: 15px; line-height: 1.6; }
 .result-value { font-size: 38px; font-weight: 700; color: #c0392b; margin: 6px 0; }
@@ -97,17 +108,29 @@ footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; bor
 <main>
 <div id="panel-top" class="panel active">
   <div class="hero">
-    <h2>SSFSSR Web Calculator</h2>
-    <p class="hero-sub">Supply Side Food Self-Sufficiency Ratio Database (2010-2023)<br>
-    Supply Side Food Self-Sufficiency Ratio Database (2010-2023)</p>
-    <div class="hero-badges">
-      <span class="badge">188 Countries</span>
-      <span class="badge">2010-2023</span>
-      <span class="badge">Based on 10-PCFSSR</span>
-      <span class="badge">World's First Unified Calculation</span>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-line"></div>
+          <span class="hero-eyebrow-text">Supply Side Food Self-Sufficiency Ratio · 10-PCFSSR Compliant</span>
+        </div>
+        <h2>Country-by-Country Food<br>Self-Sufficiency Ratio Calculator</h2>
+        <p class="hero-subtitle">SSFSSR Supply Side Food Self-Sufficiency Ratio</p>
+        <p class="hero-subtitle-sub">The world's first unified national food self-sufficiency ratio calculation</p>
+      </div>
+      <div class="hero-globe">
+        <canvas id="globe" width="180" height="180"></canvas>
+      </div>
     </div>
+    <div class="hero-badges">
+      <div class="hero-badge"><div class="hero-badge-dot"></div>188 Countries</div>
+      <div class="hero-badge"><div class="hero-badge-dot"></div>2010 – 2023</div>
+      <div class="hero-badge"><div class="hero-badge-dot"></div>Based on 10-PCFSSR</div>
+      <div class="hero-badge"><div class="hero-badge-dot"></div>World's First Unified Calculation</div>
+    </div>
+    <hr class="hero-divider">
     <p class="hero-note">
-      This public application provides country-level SSFSSR results for 2010-2023, developed in accordance with the 10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR).
+      This public application provides country-level SSFSSR results for 2010–2023, developed in accordance with the <strong>10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR)</strong>.
       To the best of the knowledge of the Development Research Group, this is the world's first public application designed to calculate and present national food self-sufficiency ratios in a unified manner under common conditions.
       Provided for academic research, policy research, and other non-commercial purposes. All values are expressed as percentages (%). Blank indicates data not available.
       Copyright 2026 Goro Takahashi / SSFSSR Development Research Group
@@ -265,7 +288,7 @@ footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; bor
       <div class="card-title">Terms of Use and Disclaimer</div>
       <div class="prose">
         <ol>
-          <li>The figures in this database are research values derived using academic methods and may change if the underlying data used for calculation are revised. Please keep this point in mind when using them.
+          <li>The figures in this database are research values derived using academic methods and may change if the underlying data used for calculation are revised. Please keep this point in mind when using them.</li>
           <li>The developer makes no warranties regarding accuracy, completeness, or timeliness. The developer shall not be held liable for any errors or consequences arising from use.</li>
           <li>Users are responsible for compliance with applicable laws in their jurisdictions.</li>
           <li>This database may be updated, revised, or discontinued without prior notice.</li>
@@ -277,9 +300,7 @@ footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; bor
     <div class="card">
       <div class="card-title">How to Cite</div>
       <div class="prose">
-        <div class="citation-box">
-          <strong>Standard citation:</strong><br>
-        </div>
+        <div class="citation-box"><strong>Standard citation:</strong><br></div>
         <div class="citation-box">
           <strong>BibTeX:</strong>
 <pre>@misc{takahashi_ssfssr_database_2026,
@@ -385,7 +406,7 @@ footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; bor
         <div class="citation-box">
           Takahashi, G. (2026). Supply Side Food Self-Sufficiency Ratio (SSFSSR) Database, 2010-2023. SSFSSR Development Research Group. <span class="url-ph">[https://ssfssr-app.github.io/ssfssr-app/]</span>
         </div>
-        </div>
+      </div>
     </div>
     <div class="card">
       <div class="card-title">著作権および利用許諾</div>
@@ -415,159 +436,48 @@ footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; bor
   <img src="https://visitor-badge.laobi.icu/badge?page_id=ssfssr-app.ssfssr-app" alt="visitor counter">
 </footer>
 <script>
-var CSV_URL = 'https://docs.google.com/spreadsheets/d/1LpbwXSAHfY9QGtzK25B5nGhMf6eTpZDjE3mn3ZG3ELE/export?format=csv&gid=249714700';
-var data = [];
-
-function showPanel(name, btn) {
-  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('panel-' + name).classList.add('active');
-  btn.classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function switchToTerms() {
-  showPanel('terms', document.querySelector('nav button:nth-child(3)'));
-}
-
-function setLang(page, lang, btn) {
-  document.querySelectorAll('#panel-' + page + ' .lang-content').forEach(function(el) { el.classList.remove('active'); });
-  document.querySelectorAll('#panel-' + page + ' .lang-btn').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById(page + '-' + lang).classList.add('active');
-  btn.classList.add('active');
-}
-
-function parseCSVLine(line) {
-  var cols = [];
-  var cur = '';
-  var inQ = false;
-  for (var i = 0; i < line.length; i++) {
-    var c = line[i];
-    if (c === '"') { inQ = !inQ; }
-    else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-    else { cur += c; }
+(function() {
+  var canvas = document.getElementById('globe');
+  var ctx = canvas.getContext('2d');
+  var R = 84, cx = 90, cy = 90, angle = 0;
+  var continents = [
+    [[30,-10],[60,-5],[80,10],[100,20],[120,30],[140,35],[145,40],[130,45],[110,50],[90,55],[70,55],[50,45],[35,40],[25,35],[20,20],[25,10],[30,-10]],
+    [[15,35],[20,25],[25,10],[30,-10],[35,-20],[30,-35],[20,-40],[15,-35],[10,-25],[5,-10],[-5,5],[-15,10],[-15,20],[-5,30],[10,35],[15,35]],
+    [[-70,50],[-60,45],[-55,50],[-60,60],[-75,65],[-90,70],[-110,65],[-130,55],[-125,45],[-110,30],[-100,20],[-90,15],[-80,10],[-75,20],[-70,30],[-65,40],[-70,50]],
+    [[-70,-5],[-60,-5],[-50,-10],[-40,-15],[-35,-25],[-40,-40],[-55,-55],[-65,-50],[-70,-40],[-75,-30],[-75,-15],[-70,-5]],
+    [[115,-25],[125,-20],[135,-15],[145,-20],[150,-30],[145,-38],[135,-38],[125,-35],[115,-30],[115,-25]],
+    [[-45,60],[-30,65],[-20,72],[-30,80],[-45,82],[-55,80],[-60,72],[-55,65],[-45,60]],
+    [[130,30],[135,33],[138,36],[140,38],[141,40],[138,42],[135,40],[132,36],[130,32],[130,30]]
+  ];
+  function toXY(lon,lat,rot){var lonR=(lon+rot)*Math.PI/180;var latR=lat*Math.PI/180;var x=R*Math.cos(latR)*Math.sin(lonR);var y=-R*Math.sin(latR);var z=R*Math.cos(latR)*Math.cos(lonR);return{x:cx+x,y:cy+y,z:z};}
+  function draw(rot){
+    ctx.clearRect(0,0,180,180);
+    var og=ctx.createRadialGradient(cx-22,cy-22,6,cx,cy,R);og.addColorStop(0,'#b8e8f8');og.addColorStop(0.5,'#5bb8d4');og.addColorStop(1,'#1a6a9a');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=og;ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.lineWidth=0.5;
+    for(var lat=-60;lat<=60;lat+=30){ctx.beginPath();var f=true;for(var lon=-180;lon<=180;lon+=3){var p=toXY(lon,lat,rot);if(p.z>0){f?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);f=false;}else{f=true;}}ctx.stroke();}
+    for(var lon2=0;lon2<360;lon2+=30){ctx.beginPath();var f2=true;for(var lat2=-85;lat2<=85;lat2+=3){var p2=toXY(lon2,lat2,rot);if(p2.z>0){f2?ctx.moveTo(p2.x,p2.y):ctx.lineTo(p2.x,p2.y);f2=false;}else{f2=true;}}ctx.stroke();}
+    var lg=ctx.createRadialGradient(cx-14,cy-14,3,cx,cy,R);lg.addColorStop(0,'#ff7a6a');lg.addColorStop(1,'#c0281a');
+    continents.forEach(function(poly){var pts=poly.map(function(c){return toXY(c[0],c[1],rot);});if(pts.filter(function(p){return p.z>0;}).length<3)return;ctx.beginPath();var s=false;pts.forEach(function(p){if(p.z>0){s?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);s=true;}});ctx.closePath();ctx.fillStyle=lg;ctx.fill();ctx.strokeStyle='rgba(140,20,10,0.35)';ctx.lineWidth=0.7;ctx.stroke();});
+    var hl=ctx.createRadialGradient(cx-28,cy-26,2,cx-18,cy-16,40);hl.addColorStop(0,'rgba(255,255,255,0.42)');hl.addColorStop(0.5,'rgba(255,255,255,0.08)');hl.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=hl;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba(46,138,80,0.45)';ctx.lineWidth=1.5;ctx.stroke();
   }
-  cols.push(cur.trim());
-  return cols;
-}
+  function animate(){draw(angle);angle+=0.25;requestAnimationFrame(animate);}
+  animate();
+})();
 
-async function loadData() {
-  try {
-    var res = await fetch(CSV_URL, { cache: 'no-cache', mode: 'cors' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var text = await res.text();
-    var lines = text.trim().split('\n');
-    data = [];
-    for (var i = 1; i < lines.length; i++) {
-      var cols = parseCSVLine(lines[i]);
-      if (cols.length < 4) continue;
-      var iso3 = cols[0];
-      var country = cols[1];
-      var year = parseInt(cols[2]);
-      var value = parseFloat(cols[3]);
-      if (country && !isNaN(year) && !isNaN(value)) {
-        data.push({ iso3: iso3, country: country, year: year, value: value });
-      }
-    }
-    var countrySet = {};
-    var countries = [];
-    for (var j = 0; j < data.length; j++) {
-      if (!countrySet[data[j].country]) {
-        countrySet[data[j].country] = true;
-        countries.push(data[j].country);
-      }
-    }
-    countries.sort();
-    var cSel = document.getElementById('country-sel');
-    var cHtml = '<option value="">-- Select Country --</option>';
-    for (var k = 0; k < countries.length; k++) {
-      cHtml += '<option value="' + countries[k] + '">' + countries[k] + '</option>';
-    }
-    cSel.innerHTML = cHtml;
-    var yearSet = {};
-    var years = [];
-    for (var m = 0; m < data.length; m++) {
-      if (!yearSet[data[m].year]) {
-        yearSet[data[m].year] = true;
-        years.push(data[m].year);
-      }
-    }
-    years.sort(function(a, b) { return a - b; });
-    var ySel = document.getElementById('year-sel');
-    var yHtml = '';
-    for (var n = 0; n < years.length; n++) {
-      yHtml += '<option value="' + years[n] + '">' + years[n] + '</option>';
-    }
-    ySel.innerHTML = yHtml;
-    ySel.value = years[years.length - 1];
-    document.getElementById('load-status').className = 'status ok';
-    document.getElementById('load-status').innerHTML = 'Data loaded: ' + data.length + ' records, ' + countries.length + ' countries, ' + years[0] + '-' + years[years.length - 1];
-  } catch (e) {
-    document.getElementById('load-status').className = 'status err';
-    document.getElementById('load-status').innerHTML = 'Failed to load data. Please check the Google Sheets URL.';
-    console.error(e);
-  }
-}
-
-function lookup() {
-  var country = document.getElementById('country-sel').value;
-  var year = parseInt(document.getElementById('year-sel').value);
-  if (!country) { setResult('<span style="color:#aab3bb">Please select a country.</span>'); return; }
-  var row = null;
-  for (var i = 0; i < data.length; i++) {
-    if (data[i].country === country && data[i].year === year) { row = data[i]; break; }
-  }
-  if (row) {
-    setResult('<div class="result-country">' + row.country + ' (' + row.iso3 + ')</div><div class="result-value">' + row.value + '%</div><div class="result-meta">SSFSSR ' + row.year + '</div>');
-  } else {
-    setResult('<span style="color:#aab3bb">No data found.</span>');
-  }
-}
-
-function showAll() {
-  var country = document.getElementById('country-sel').value;
-  if (!country) { setResult('<span style="color:#aab3bb">Please select a country.</span>'); return; }
-  var rows = [];
-  for (var i = 0; i < data.length; i++) {
-    if (data[i].country === country) rows.push(data[i]);
-  }
-  rows.sort(function(a, b) { return a.year - b.year; });
-  if (!rows.length) { setResult('<span>No data found.</span>'); return; }
-  var min = rows[0].value, max = rows[0].value;
-  for (var j = 0; j < rows.length; j++) {
-    if (rows[j].value < min) min = rows[j].value;
-    if (rows[j].value > max) max = rows[j].value;
-  }
-  var html = '<div class="result-country" style="margin-bottom:12px">' + rows[0].country + ' (' + rows[0].iso3 + ')</div><table><tr><th>Year</th><th>SSFSSR (%)</th></tr>';
-  for (var k = 0; k < rows.length; k++) {
-    var style = '';
-    if (rows[k].value === max) style = 'color:#c0392b;font-weight:700';
-    else if (rows[k].value === min) style = 'color:#27ae60;font-weight:700';
-    html += '<tr><td>' + rows[k].year + '</td><td style="' + style + '">' + (isNaN(rows[k].value) ? '-' : rows[k].value + '%') + '</td></tr>';
-  }
-  html += '</table><p style="font-size:12px;color:#7f8c8d;margin-top:10px">Min: ' + min + '% | Max: ' + max + '% | Change: ' + (rows[rows.length-1].value - rows[0].value).toFixed(1) + 'pp (' + rows[0].year + ' to ' + rows[rows.length-1].year + ')</p>';
-  setResult(html);
-}
-
-function setResult(html) { document.getElementById('result').innerHTML = html; }
-
-document.getElementById('contact-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  var fb = document.getElementById('form-feedback');
-  var btn = this.querySelector('button[type="submit"]');
-  btn.disabled = true; btn.textContent = 'Sending...';
-  try {
-    var res = await fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json' } });
-    if (res.ok) {
-      fb.innerHTML = '<div class="status ok">Your inquiry has been sent successfully.</div>';
-      this.reset();
-    } else { throw new Error(); }
-  } catch(err) {
-    fb.innerHTML = '<div class="status err">Failed to send. Please try again or email us directly.</div>';
-  }
-  btn.disabled = false; btn.textContent = 'Send Inquiry';
-});
-
+var CSV_URL='https://docs.google.com/spreadsheets/d/1LpbwXSAHfY9QGtzK25B5nGhMf6eTpZDjE3mn3ZG3ELE/export?format=csv&gid=249714700';
+var data=[];
+function showPanel(name,btn){document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('active');});document.getElementById('panel-'+name).classList.add('active');btn.classList.add('active');window.scrollTo(0,0);}
+function switchToTerms(){showPanel('terms',document.querySelector('nav button:nth-child(3)'));}
+function setLang(page,lang,btn){document.querySelectorAll('#panel-'+page+' .lang-content').forEach(function(el){el.classList.remove('active');});document.querySelectorAll('#panel-'+page+' .lang-btn').forEach(function(b){b.classList.remove('active');});document.getElementById(page+'-'+lang).classList.add('active');btn.classList.add('active');}
+function parseCSVLine(line){var cols=[];var cur='';var inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){cols.push(cur.trim());cur='';}else{cur+=c;}}cols.push(cur.trim());return cols;}
+async function loadData(){try{var res=await fetch(CSV_URL,{cache:'no-cache',mode:'cors'});if(!res.ok)throw new Error('HTTP '+res.status);var text=await res.text();var lines=text.trim().split('\n');data=[];for(var i=1;i<lines.length;i++){var cols=parseCSVLine(lines[i]);if(cols.length<4)continue;var iso3=cols[0];var country=cols[1];var year=parseInt(cols[2]);var value=parseFloat(cols[3]);if(country&&!isNaN(year)&&!isNaN(value)){data.push({iso3:iso3,country:country,year:year,value:value});}}var countrySet={};var countries=[];for(var j=0;j<data.length;j++){if(!countrySet[data[j].country]){countrySet[data[j].country]=true;countries.push(data[j].country);}}countries.sort();var cSel=document.getElementById('country-sel');var cHtml='<option value="">-- Select Country --</option>';for(var k=0;k<countries.length;k++){cHtml+='<option value="'+countries[k]+'">'+countries[k]+'</option>';}cSel.innerHTML=cHtml;var yearSet={};var years=[];for(var m=0;m<data.length;m++){if(!yearSet[data[m].year]){yearSet[data[m].year]=true;years.push(data[m].year);}}years.sort(function(a,b){return a-b;});var ySel=document.getElementById('year-sel');var yHtml='';for(var n=0;n<years.length;n++){yHtml+='<option value="'+years[n]+'">'+years[n]+'</option>';}ySel.innerHTML=yHtml;ySel.value=years[years.length-1];document.getElementById('load-status').className='status ok';document.getElementById('load-status').innerHTML='Data loaded: '+data.length+' records, '+countries.length+' countries, '+years[0]+'-'+years[years.length-1];}catch(e){document.getElementById('load-status').className='status err';document.getElementById('load-status').innerHTML='Failed to load data. Please check the Google Sheets URL.';console.error(e);}}
+function lookup(){var country=document.getElementById('country-sel').value;var year=parseInt(document.getElementById('year-sel').value);if(!country){setResult('<span style="color:#aab3bb">Please select a country.</span>');return;}var row=null;for(var i=0;i<data.length;i++){if(data[i].country===country&&data[i].year===year){row=data[i];break;}}if(row){setResult('<div class="result-country">'+row.country+' ('+row.iso3+')</div><div class="result-value">'+row.value+'%</div><div class="result-meta">SSFSSR '+row.year+'</div>');}else{setResult('<span style="color:#aab3bb">No data found.</span>');}}
+function showAll(){var country=document.getElementById('country-sel').value;if(!country){setResult('<span style="color:#aab3bb">Please select a country.</span>');return;}var rows=[];for(var i=0;i<data.length;i++){if(data[i].country===country)rows.push(data[i]);}rows.sort(function(a,b){return a.year-b.year;});if(!rows.length){setResult('<span>No data found.</span>');return;}var min=rows[0].value,max=rows[0].value;for(var j=0;j<rows.length;j++){if(rows[j].value<min)min=rows[j].value;if(rows[j].value>max)max=rows[j].value;}var html='<div class="result-country" style="margin-bottom:12px">'+rows[0].country+' ('+rows[0].iso3+')</div><table><tr><th>Year</th><th>SSFSSR (%)</th></tr>';for(var k=0;k<rows.length;k++){var style='';if(rows[k].value===max)style='color:#c0392b;font-weight:700';else if(rows[k].value===min)style='color:#27ae60;font-weight:700';html+='<tr><td>'+rows[k].year+'</td><td style="'+style+'">'+(isNaN(rows[k].value)?'-':rows[k].value+'%')+'</td></tr>';}html+='</table><p style="font-size:12px;color:#7f8c8d;margin-top:10px">Min: '+min+'% | Max: '+max+'% | Change: '+(rows[rows.length-1].value-rows[0].value).toFixed(1)+'pp ('+rows[0].year+' to '+rows[rows.length-1].year+')</p>';setResult(html);}
+function setResult(html){document.getElementById('result').innerHTML=html;}
+document.getElementById('contact-form').addEventListener('submit',async function(e){e.preventDefault();var fb=document.getElementById('form-feedback');var btn=this.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Sending...';try{var res=await fetch(this.action,{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});if(res.ok){fb.innerHTML='<div class="status ok">Your inquiry has been sent successfully.</div>';this.reset();}else{throw new Error();}}catch(err){fb.innerHTML='<div class="status err">Failed to send. Please try again or email us directly.</div>';}btn.disabled=false;btn.textContent='Send Inquiry';});
 loadData();
 </script>
 </body>
